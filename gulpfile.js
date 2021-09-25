@@ -1,11 +1,10 @@
 'use strict';
 
 var gulp         = require('gulp');
-var sass         = require('gulp-sass');
+var sass         = require('gulp-sass')(require('node-sass'));
 var sourcemaps   = require('gulp-sourcemaps');
 var fileinclude  = require('gulp-file-include');
 var autoprefixer = require('gulp-autoprefixer');
-var runSequence  = require('run-sequence');
 var bs           = require('browser-sync').create();
 var rimraf       = require('rimraf');
 
@@ -90,17 +89,16 @@ gulp.task('clean', function (cb) {
 
 // Watch Task
 gulp.task('watch:build', function () {
-  gulp.watch(path.src.html, ['html:build']);
-  gulp.watch(path.src.htminc, ['html:build']);
-  gulp.watch(path.src.scss, ['scss:build']);
-  gulp.watch(path.src.js, ['js:build']);
-  gulp.watch(path.src.images, ['images:build']);
-  gulp.watch(path.src.plugins, ['plugins:build']);
+  gulp.watch(path.src.html, gulp.parallel('html:build'));
+  gulp.watch(path.src.htminc, gulp.parallel('html:build'));
+  gulp.watch(path.src.scss, gulp.parallel('scss:build'));
+  gulp.watch(path.src.js, gulp.parallel('js:build'));
+  gulp.watch(path.src.images, gulp.parallel('images:build'));
+  gulp.watch(path.src.plugins, gulp.parallel('plugins:build'));
 });
 
 // Build Task
-gulp.task('build', function () {
-  runSequence(
+gulp.task('build', gulp.series(
     'clean',
     'html:build',
     'js:build',
@@ -108,7 +106,7 @@ gulp.task('build', function () {
     'images:build',
     'plugins:build',
     'others:build',
-    'watch:build',
+//    'watch:build',
     function () {
       bs.init({
         server: {
@@ -116,7 +114,6 @@ gulp.task('build', function () {
         }
       });
     }
-  );
-});
+));
 
-gulp.task("default", ["build"]);
+gulp.task("default", gulp.parallel("build"));
