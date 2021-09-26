@@ -5,5 +5,4 @@ Thumbs.db
 .sass-cache
 npm-debug.log
 node_modules
-package-lock.json
 /theme/
