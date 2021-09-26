@@ -106,16 +106,21 @@ gulp.task('build', gulp.series(
     'images:build',
     'plugins:build',
     'others:build',
-    gulp.parallel(
-      function () {
-        bs.init({
-          server: {
-            baseDir: path.build.dirDev
-          }
-        });
-      },
-      'watch:build',
-    ),
 ));
+
+gulp.task('dev', gulp.series(
+  'build',
+  gulp.parallel(
+    function () {
+      bs.init({
+        server: {
+          baseDir: path.build.dirDev
+        }
+      });
+    },
+    'watch:build',
+  ),
+  )
+);
 
 gulp.task("default", gulp.parallel("build"));
